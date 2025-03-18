@@ -22,11 +22,20 @@ dependencies = [
 dev = [
     "ruff~=0.3.0",
     "pre-commit~=3.5.0",
+    "pytest~=7.4.0",
+    "pytest-cov~=4.1.0",
 ]
 
 [project.scripts]
 mini-chat = "mini_chat.__main__:main"
 mc = "mini_chat.__main__:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+python_classes = "Test*"
+addopts = "--cov=mini_chat --cov-report=term"
 
 [tool.ruff]
 target-version = "py310"

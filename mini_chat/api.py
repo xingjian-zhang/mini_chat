@@ -60,13 +60,16 @@ def send_message(
 def _send_request(headers: dict[str, str], data: dict[str, Any], base_url: str) -> str:
     """Send a non-streaming request to the API."""
     url = f"{base_url}/chat/completions"
-    response = requests.post(url, headers=headers, json=data, timeout=30)
+    try:
+        response = requests.post(url, headers=headers, json=data, timeout=30)
 
-    if response.status_code != 200:
-        raise APIError(f"API returned error {response.status_code}: {response.text}")
+        if response.status_code != 200:
+            raise APIError(f"API returned error {response.status_code}: {response.text}")
 
-    result = response.json()
-    return result["choices"][0]["message"]["content"]
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
+    except RequestException as e:
+        raise APIError(f"API request failed: {e!s}") from e
 
 
 def _stream_response(

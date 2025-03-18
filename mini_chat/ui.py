@@ -90,8 +90,10 @@ def handle_streaming_response(conversation: Conversation, live: Live) -> Callabl
 
     # Return a function that updates the content
     def update_content(new_content: str) -> None:
-        message.content += new_content
-        live.update(create_message_display(message))
+        # Update the actual message object's content
+        conversation.messages[-1].content += new_content
+        # Update the display with the new content
+        live.update(create_message_display(conversation.messages[-1]))
 
     return update_content
 

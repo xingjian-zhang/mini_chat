@@ -19,9 +19,6 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "max_tokens": 1000,
     "temperature": 0.7,
     "stream": True,
-    # Chat settings
-    "history_size": 10,
-    # Default system prompt
     "system_prompt": "You are a helpful assistant.",
 }
 
