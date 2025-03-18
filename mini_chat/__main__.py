@@ -1,5 +1,6 @@
 """Main entry point for the terminal chatbot."""
 
+import signal
 import sys
 
 from rich.console import Console
@@ -17,6 +18,17 @@ from mini_chat.ui import (
 )
 
 console = Console()
+
+
+# Set up signal handler for clean exit with Ctrl+C
+def signal_handler(sig, frame):
+    """Handle keyboard interrupt signal."""
+    console.print("\n[bold yellow]Chatbot terminated by user.[/bold yellow]")
+    sys.exit(0)
+
+
+# Register the signal handler
+signal.signal(signal.SIGINT, signal_handler)
 
 
 def process_command(command: str, conversation: Conversation) -> bool:
@@ -82,23 +94,29 @@ def main() -> None:
         progress.add_task("Thinking", total=None)
 
         # Use a single Live display for both loading and streaming
-        with Live(progress, refresh_per_second=10) as live:
-            try:
-                # Add initial empty assistant message
-                conversation.add_message("assistant", "")
+        try:
+            with Live(progress, refresh_per_second=10) as live:
+                try:
+                    # Add initial empty assistant message
+                    conversation.add_message("assistant", "")
 
-                # Create streaming response handler
-                update_content = handle_streaming_response(conversation, live)
+                    # Create streaming response handler
+                    update_content = handle_streaming_response(conversation, live)
 
-                # Send message to API with streaming callback
-                send_message(conversation, update_content)
+                    # Send message to API with streaming callback
+                    send_message(conversation, update_content)
 
-            except APIError as e:
-                console.print(f"[bold red]Error: {e!s}[/bold red]")
-                # Remove the last assistant message if it exists
-                if conversation.messages and conversation.messages[-1].role == "assistant":
-                    conversation.messages.pop()
-                continue
+                except APIError as e:
+                    console.print(f"[bold red]Error: {e!s}[/bold red]")
+                    # Remove the last assistant message if it exists
+                    if conversation.messages and conversation.messages[-1].role == "assistant":
+                        conversation.messages.pop()
+                    continue
+                except KeyboardInterrupt:
+                    raise  # Re-raise to be caught by the outer try/except
+        except KeyboardInterrupt:
+            console.print("\n[bold yellow]Chatbot terminated by user.[/bold yellow]")
+            sys.exit(0)
 
         # Refresh display after completion
         display_conversation(conversation)

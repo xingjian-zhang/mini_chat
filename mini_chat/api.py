@@ -82,27 +82,33 @@ def _stream_response(
     # Collect the full response while also calling the callback
     full_response = ""
 
-    for line in response.iter_lines():
-        if not line:
-            continue
+    try:
+        for line in response.iter_lines():
+            if not line:
+                continue
 
-        # Remove the "data: " prefix
-        if line.startswith(b"data: "):
-            line = line[6:]
+            # Remove the "data: " prefix
+            if line.startswith(b"data: "):
+                line = line[6:]
 
-        # "[DONE]" marks the end of the stream
-        if line == b"[DONE]":
-            break
+            # "[DONE]" marks the end of the stream
+            if line == b"[DONE]":
+                break
 
-        try:
-            chunk = json.loads(line)
-            if chunk.get("choices") and chunk["choices"]:
-                delta = chunk["choices"][0].get("delta", {})
-                if "content" in delta:
-                    content = delta["content"]
-                    full_response += content
-                    on_content(content)
-        except json.JSONDecodeError:
-            pass
+            try:
+                chunk = json.loads(line)
+                if chunk.get("choices") and chunk["choices"]:
+                    delta = chunk["choices"][0].get("delta", {})
+                    if "content" in delta:
+                        content = delta["content"]
+                        full_response += content
+                        on_content(content)
+            except json.JSONDecodeError:
+                pass
+    except KeyboardInterrupt:
+        # Close the response connection properly
+        response.close()
+        # Re-raise to be caught by the main try/except
+        raise
 
     return full_response

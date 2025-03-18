@@ -1,5 +1,6 @@
 """UI components for the terminal chatbot."""
 
+import sys
 from collections.abc import Callable
 
 from rich.console import Console
@@ -41,7 +42,11 @@ def display_conversation(conversation: Conversation) -> None:
 
 def get_user_input() -> str:
     """Get input from the user."""
-    return Prompt.ask("[bold blue]You[/bold blue]")
+    try:
+        return Prompt.ask("[bold blue]You[/bold blue]")
+    except KeyboardInterrupt:
+        console.print("\n[bold yellow]Chatbot terminated by user.[/bold yellow]")
+        sys.exit(0)
 
 
 def create_loading_display(message: str = "Thinking") -> Progress:
