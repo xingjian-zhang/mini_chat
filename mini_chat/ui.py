@@ -113,7 +113,11 @@ def handle_streaming_response(conversation: Conversation, live: Live) -> Callabl
 
 def show_help() -> None:
     """Display help information."""
-    table = Table(title="Available Commands")
+    # Create a nicely formatted title
+    console.print("\n[bold]mini-chat Help[/bold]", style="bold green", justify="center")
+    console.print("Available commands are listed below\n", style="italic", justify="center")
+
+    table = Table(show_header=True, header_style="bold magenta")
     table.add_column("Command", style="bold blue")
     table.add_column("Description", style="green")
 
@@ -143,4 +147,5 @@ def show_help() -> None:
     table.add_row("/profile clone <src> <dest>", "Clone an existing profile to a new one")
     table.add_row("/profile delete <n>", "Delete a profile")
 
+    # Print the table to the terminal using the console object
     console.print(table)

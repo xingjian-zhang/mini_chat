@@ -263,6 +263,9 @@ def process_command(
         return False, updated_config
     elif cmd == "/help":
         show_help()
+        # Pause to allow the user to read the help message
+        console.print("\n[dim]Press Enter to continue...[/dim]")
+        input()
     elif cmd == "/clear":
         conversation.clear()
         console.print("[bold yellow]Conversation cleared.[/bold yellow]")
