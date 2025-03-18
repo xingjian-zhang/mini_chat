@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Terminal Chatbot App Rules
+
+Description:
+This rule provides guidance for developing a terminal-based chatbot application using the Rich framework for UI and direct HTTP requests for API communication.
+
+Patterns: *.py, *.json, *.md
+
+Rules:
+1. Use the Rich library (https://github.com/Textualize/rich) for all terminal UI components
+   - Leverage Rich's Panel, Text, Progress, and other components for an interactive UI
+   - Use Rich's Layout system for structured terminal interfaces
+   - Implement console.print() for styled output and rich formatting
+
+2. Minimize dependencies:
+   - Avoid LangChain, LlamaIndex, or other large AI frameworks
+   - Use the standard 'requests' library for HTTP communications
+   - Only use the following libraries: rich, requests, json, os, sys, typing
+
+3. API Communication:
+   - Implement direct HTTP requests to AI APIs
+   - Include proper error handling for network failures
+   - Ensure proper authentication handling with environment variables
+   - Create a simple interface layer between the UI and API calls
+
+4. Code Structure:
+   - Use a modular design with separation of concerns
+   - Keep UI logic separate from API communication logic
+   - Use typing annotations for better code clarity
+   - Add clear docstrings to functions and classes
+
+5. User Experience:
+   - Implement streaming responses when possible
+   - Add loading indicators during API calls
+   - Design a clear command interface for user interactions
+   - Include help text and clear error messages
+
+6. File Organization:
+   - main.py for application entry point
+   - ui.py for Rich UI components
+   - api.py for HTTP request handling
+   - config.py for configuration management
+   - models.py for data models/structures
+
+7. Use `uv` for package management

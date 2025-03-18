@@ -1,0 +1,8 @@
+# pyc
+*.pyc
+
+# venv
+venv/
+
+# config
+config.json
