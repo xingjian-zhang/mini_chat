@@ -1,10 +1,10 @@
 """Configuration management for the terminal chatbot."""
 
 import os
-from typing import Dict, Any, Optional
+from typing import Any
 
 # Default configuration
-DEFAULT_CONFIG: Dict[str, Any] = {
+DEFAULT_CONFIG: dict[str, Any] = {
     "api_base_url": "https://api.openai.com/v1",
     "model": "gpt-3.5-turbo",
     "max_tokens": 1000,
@@ -14,7 +14,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 }
 
 
-def load_config() -> Dict[str, Any]:
+def load_config() -> dict[str, Any]:
     """Load configuration from environment variables or use defaults."""
     config = DEFAULT_CONFIG.copy()
 
@@ -34,7 +34,7 @@ def load_config() -> Dict[str, Any]:
     return config
 
 
-def get_api_key() -> Optional[str]:
+def get_api_key() -> str | None:
     """Get API key from environment variables."""
     # First check for OPENAI_API_KEY, then fall back to API_KEY
     return os.environ.get("OPENAI_API_KEY") or os.environ.get("API_KEY")
