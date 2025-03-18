@@ -15,7 +15,7 @@ def setup_signal_handler() -> None:
 
     def signal_handler(sig: int, frame: Any) -> None:
         """Handle keyboard interrupt signal."""
-        console.print("\n[bold yellow]Chatbot terminated by user.[/bold yellow]")
+        console.print("\n[bold yellow]mini-chat terminated by user.[/bold yellow]")
         sys.exit(0)
 
     # Only register in non-test environments

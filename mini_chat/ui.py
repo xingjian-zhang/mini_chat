@@ -4,7 +4,7 @@ import sys
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.live import Live
 from rich.markdown import Markdown
 from rich.progress import Progress, SpinnerColumn, TextColumn
@@ -33,7 +33,7 @@ def create_message_display(message: Message) -> Text | Markdown:
 def display_conversation(conversation: Conversation) -> None:
     """Display the entire conversation."""
     console.clear()
-    console.print("[bold]Terminal Chatbot[/bold]", justify="center")
+    console.print("[bold]mini-chat[/bold]", justify="center")
 
     for message in conversation.messages:
         if message.role != "system":  # Don't show system messages
@@ -60,7 +60,7 @@ def get_user_input() -> str:
         console.print(role_text)
         return console.input()
     except KeyboardInterrupt:
-        console.print("\n[bold yellow]Chatbot terminated by user.[/bold yellow]")
+        console.print("\n[bold yellow]mini-chat terminated by user.[/bold yellow]")
         sys.exit(0)
 
 
@@ -92,17 +92,21 @@ def handle_streaming_response(conversation: Conversation, live: Live) -> Callabl
     """
     # Get the last message (the assistant's response)
     message = conversation.messages[-1]
-    content = create_message_display(message)
 
-    # Initially update the live display with the content
-    live.update(content)
+    # Create assistant label with consistent styling
+    role_text = Text("\nAssistant: ", style="bold green")
+
+    # Initially update the live display with empty content
+    content = create_message_display(message)
+    live.update(Group(role_text, content))
 
     # Return a function that updates the content
     def update_content(new_content: str) -> None:
         # Update the actual message object's content
         conversation.messages[-1].content += new_content
-        # Update the display with the new content
-        live.update(create_message_display(conversation.messages[-1]))
+        # Create a new Markdown instance with the complete content to ensure consistent rendering
+        content = create_message_display(conversation.messages[-1])
+        live.update(Group(role_text, content))
 
     return update_content
 

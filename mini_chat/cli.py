@@ -219,10 +219,8 @@ def handle_profile_command(
                 )
             return config
         else:
-            error_msg = (
-                "[bold red]Unknown profile command. Use: /profile [use|list|create|delete|clone]"
-            )
-            error_msg += "[/bold red]"
+            cmd_options = "[use|list|create|delete|clone]"
+            error_msg = f"[bold red]Unknown profile command. Use: /profile {cmd_options}[/bold red]"
             console.print(error_msg)
             return config
 
@@ -261,7 +259,7 @@ def process_command(
     updated_config = config.copy()
 
     if cmd == "/exit":
-        console.print("[bold yellow]Goodbye![/bold yellow]")
+        console.print("[bold yellow]mini-chat exiting...[/bold yellow]")
         return False, updated_config
     elif cmd == "/help":
         show_help()

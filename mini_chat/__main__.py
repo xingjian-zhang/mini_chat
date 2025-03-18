@@ -70,7 +70,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        console.print("\n[bold yellow]Chatbot terminated by user.[/bold yellow]")
+        console.print("\n[bold yellow]mini-chat terminated by user.[/bold yellow]")
         sys.exit(0)
     except Exception as e:
         console.print(f"[bold red]An error occurred: {e}[/bold red]")
