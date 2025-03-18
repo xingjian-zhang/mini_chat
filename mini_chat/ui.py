@@ -1,7 +1,8 @@
 """UI components for the terminal chatbot."""
 
 import sys
-from collections.abc import Callable
+from collections.abc import Callable, Generator
+from contextlib import contextmanager
 
 from rich.console import Console
 from rich.live import Live
@@ -23,7 +24,8 @@ def create_message_display(message: Message) -> Text | Markdown:
     else:
         # Use plain text with styling for user
         content = Text(message.content)
-        content.stylize("blue")
+        if message.role == "user":
+            content.stylize("blue")
 
     return content
 
@@ -62,13 +64,20 @@ def get_user_input() -> str:
         sys.exit(0)
 
 
-def create_loading_display(message: str = "Thinking") -> Progress:
-    """Create a loading spinner display."""
-    return Progress(
+@contextmanager
+def create_loading_display(message: str = "Thinking") -> Generator[Progress, None, None]:
+    """Create a loading spinner display with context manager support."""
+    progress = Progress(
         SpinnerColumn(),
         TextColumn("[bold green]{task.description}[/bold green]"),
         transient=True,
     )
+    _ = progress.add_task(message, total=None)
+
+    try:
+        yield progress
+    finally:
+        progress.stop()
 
 
 def handle_streaming_response(conversation: Conversation, live: Live) -> Callable[[str], None]:
@@ -100,29 +109,34 @@ def handle_streaming_response(conversation: Conversation, live: Live) -> Callabl
 
 def show_help() -> None:
     """Display help information."""
-    console = Console()
-
     table = Table(title="Available Commands")
     table.add_column("Command", style="bold blue")
     table.add_column("Description", style="green")
 
+    # Basic commands
     table.add_row("/help", "Show this help message")
     table.add_row("/clear", "Clear the conversation history")
     table.add_row("/exit", "Exit the chatbot")
+
+    # System prompt commands
     table.add_row("/system <text>", "Set the system message")
     table.add_row("/system", "Show current system message")
+
+    # Configuration commands
     table.add_row("/config key=value", "Set a configuration value")
     table.add_row("/config", "Show all configuration values")
     table.add_row("/save", "Save current configuration")
     table.add_row("/reset config", "Reset configuration to defaults")
+
+    # Profile management commands
     table.add_row("/profile", "Show current profile and list all profiles")
-    table.add_row("/profile use <name>", "Switch to a different profile")
+    table.add_row("/profile use <n>", "Switch to a different profile")
     table.add_row("/profile list", "List all available profiles")
-    table.add_row("/profile create <name>", "Create a new profile with default settings")
+    table.add_row("/profile create <n>", "Create a new profile with default settings")
     table.add_row(
-        "/profile create <name> --from-current", "Create a new profile from current settings"
+        "/profile create <n> --from-current", "Create a new profile from current settings"
     )
     table.add_row("/profile clone <src> <dest>", "Clone an existing profile to a new one")
-    table.add_row("/profile delete <name>", "Delete a profile")
+    table.add_row("/profile delete <n>", "Delete a profile")
 
     console.print(table)

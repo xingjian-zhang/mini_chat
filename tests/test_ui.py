@@ -5,10 +5,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 from rich.console import Console
 from rich.markdown import Markdown
+from rich.progress import Progress
 from rich.text import Text
 
 from mini_chat.models import Conversation, Message
-from mini_chat.ui import create_message_display, handle_streaming_response
+from mini_chat.ui import create_loading_display, create_message_display, handle_streaming_response
 
 
 @pytest.fixture
@@ -94,3 +95,19 @@ def test_handle_streaming_response(mock_live_class, mock_conversation):
 
     # Live.update should have been called for each content update
     assert mock_live.update.call_count >= 2
+
+
+def test_create_loading_display():
+    """Test the loading display context manager."""
+    with patch("mini_chat.ui.Progress") as mock_progress_class:
+        mock_progress = MagicMock(spec=Progress)
+        mock_progress_class.return_value = mock_progress
+
+        # Test context manager behavior
+        with create_loading_display("Testing") as progress:
+            assert progress == mock_progress
+            assert mock_progress.add_task.called
+            assert mock_progress.add_task.call_args[0][0] == "Testing"
+
+        # Verify progress.stop was called when context manager exits
+        assert mock_progress.stop.called
