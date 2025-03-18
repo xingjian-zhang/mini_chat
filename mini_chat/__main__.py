@@ -54,16 +54,7 @@ def main() -> None:
         sys.exit(1)
 
     # Initialize conversation with a default system message
-    conversation = Conversation(
-        [
-            Message(
-                role="system",
-                content="You are a helpful assistant. Format your responses using Markdown. "
-                "Use headings, lists, code blocks with syntax highlighting, and other "
-                "Markdown features to structure your responses effectively.",
-            )
-        ]
-    )
+    conversation = Conversation([Message(role="system", content="You are a helpful assistant.")])
 
     console.clear()
     console.print("[bold]Welcome to Terminal Chatbot[/bold]", justify="center")
