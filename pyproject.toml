@@ -13,17 +13,17 @@ authors = [
     {name = "Xingjian Zhang", email = "jimmyzxj@umich.edu"}
 ]
 dependencies = [
-    "rich~=13.7.0",
-    "requests~=2.31.0",
-    "pyyaml~=6.0.1",
+    "rich>=13.0.0",
+    "requests>=2.25.0",
+    "pyyaml>=6.0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ruff~=0.3.0",
-    "pre-commit~=3.5.0",
-    "pytest~=7.4.0",
-    "pytest-cov~=4.1.0",
+    "ruff>=0.0.0",
+    "pre-commit>=3.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
 ]
 
 [project.scripts]
