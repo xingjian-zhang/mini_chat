@@ -2,42 +2,100 @@
 
 A simple terminal-based chatbot using the Rich library for UI and direct HTTP requests for API communication.
 
-## Setup
+## Features
 
-1. Create a virtual environment and install dependencies using `uv`:
+- Rich terminal UI with colored message panels
+- Markdown rendering for assistant responses
+- Streaming responses from the AI
+- Loading indicators during API calls
+- Command system with /help, /clear, /exit, and /system commands
+- Proper error handling for API requests
+- Configuration management with environment variables
+- Modular design with separation of concerns
 
+## Installation
+
+### Development Installation
+
+1. Clone the repository and change into the directory:
+
+```bash
+git clone https://github.com/yourusername/mini-chat.git
+cd mini-chat
 ```
-# Install uv if you don't have it yet
-pip install uv
 
-# Create a virtual environment and install dependencies
+2. Create a virtual environment and install the development dependencies:
+
+```bash
+# Using uv (recommended)
 uv venv
-uv pip install -r requirements.txt
-```
+uv pip install -e ".[dev]"
 
-2. Set your OpenAI API key:
-
-```
-export OPENAI_API_KEY=your_openai_api_key_here
-```
-
-3. Run the chatbot:
-
-```
-# Activate the virtual environment
+# Or using pip
+python -m venv .venv
 source .venv/bin/activate  # On Unix/macOS
 # OR
 .venv\Scripts\activate     # On Windows
-
-# Run the chatbot
-python main.py
+pip install -e ".[dev]"
 ```
 
-## Commands
+### Regular Installation
+
+```bash
+pip install git+https://github.com/yourusername/mini-chat.git
+```
+
+## Configuration
+
+Set your OpenAI API key:
+
+```bash
+export OPENAI_API_KEY=your_openai_api_key_here
+```
+
+Other optional configuration variables:
+- `API_BASE_URL`: The base URL for the API (default: `https://api.openai.com/v1`)
+- `API_MODEL`: The model to use (default: `gpt-3.5-turbo`)
+- `API_MAX_TOKENS`: Maximum tokens in the response (default: `1000`)
+- `API_TEMPERATURE`: Temperature setting (default: `0.7`)
+
+## Usage
+
+Run the chatbot:
+
+```bash
+# If installed as a package
+mini-chat
+
+# Or from the repository
+python -m mini_chat
+```
+
+### Commands
 
 - `/help` - Display help information
 - `/clear` - Clear the conversation
 - `/exit` - Exit the chatbot
 - `/system <message>` - Add a system message (instructions)
 
-Just type normally to chat with the AI assistant. 
+Just type normally to chat with the AI assistant.
+
+## Development
+
+Run linting:
+
+```bash
+ruff check .
+```
+
+Apply automatic fixes:
+
+```bash
+ruff check --fix .
+```
+
+Format code:
+
+```bash
+ruff format .
+``` 
