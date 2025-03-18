@@ -7,6 +7,7 @@ from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 from rich.text import Text
 
 from mini_chat.models import Conversation, Message
@@ -97,11 +98,29 @@ def handle_streaming_response(conversation: Conversation, live: Live) -> Callabl
 
 def show_help() -> None:
     """Display help information."""
-    console.print("[bold]Terminal Chatbot Commands:[/bold]")
-    console.print("")
-    console.print("  /help    - Display this help message")
-    console.print("  /clear   - Clear the conversation")
-    console.print("  /exit    - Exit the chatbot")
-    console.print("  /system  - Add a system message (instructions)")
-    console.print("")
-    console.print("Just type normally to chat with the AI assistant.")
+    console = Console()
+
+    table = Table(title="Available Commands")
+    table.add_column("Command", style="bold blue")
+    table.add_column("Description", style="green")
+
+    table.add_row("/help", "Show this help message")
+    table.add_row("/clear", "Clear the conversation history")
+    table.add_row("/exit", "Exit the chatbot")
+    table.add_row("/system <text>", "Set the system message")
+    table.add_row("/system", "Show current system message")
+    table.add_row("/config key=value", "Set a configuration value")
+    table.add_row("/config", "Show all configuration values")
+    table.add_row("/save", "Save current configuration")
+    table.add_row("/reset config", "Reset configuration to defaults")
+    table.add_row("/profile", "Show current profile and list all profiles")
+    table.add_row("/profile use <name>", "Switch to a different profile")
+    table.add_row("/profile list", "List all available profiles")
+    table.add_row("/profile create <name>", "Create a new profile with default settings")
+    table.add_row(
+        "/profile create <name> --from-current", "Create a new profile from current settings"
+    )
+    table.add_row("/profile clone <src> <dest>", "Clone an existing profile to a new one")
+    table.add_row("/profile delete <name>", "Delete a profile")
+
+    console.print(table)

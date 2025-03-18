@@ -15,6 +15,7 @@ authors = [
 dependencies = [
     "rich~=13.7.0",
     "requests~=2.31.0",
+    "pyyaml~=6.0.1",
 ]
 
 [project.optional-dependencies]
@@ -25,6 +26,7 @@ dev = [
 
 [project.scripts]
 mini-chat = "mini_chat.__main__:main"
+mc = "mini_chat.__main__:main"
 
 [tool.ruff]
 target-version = "py310"

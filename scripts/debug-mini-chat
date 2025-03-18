@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Debug script for mini-chat with logging enabled."""
+
+import logging
+
+from mini_chat.__main__ import main
+
+# Set up debug logging
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+if __name__ == "__main__":
+    main()
