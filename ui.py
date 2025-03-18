@@ -4,6 +4,7 @@ from typing import List, Optional, Callable
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
+from rich.markdown import Markdown
 from rich.live import Live
 from rich.layout import Layout
 from rich.prompt import Prompt
@@ -16,8 +17,15 @@ console = Console()
 def create_message_panel(message: Message) -> Panel:
     """Create a panel to display a message."""
     style = "green" if message.role == "assistant" else "blue"
+    
+    # Use Markdown for assistant messages, plain text for user
+    if message.role == "assistant":
+        content = Markdown(message.content)
+    else:
+        content = Text(message.content)
+        
     return Panel(
-        Text(message.content),
+        content,
         title=f"[bold]{message.role.capitalize()}[/bold]",
         border_style=style,
         expand=False

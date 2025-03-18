@@ -52,7 +52,7 @@ def main() -> None:
     
     # Initialize conversation with a default system message
     conversation = Conversation([
-        Message(role="system", content="You are a helpful assistant.")
+        Message(role="system", content="You are a helpful assistant. Format your responses using Markdown. Use headings, lists, code blocks with syntax highlighting, and other Markdown features to structure your responses effectively.")
     ])
     
     console.clear()
