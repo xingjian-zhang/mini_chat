@@ -82,6 +82,8 @@ Just type normally to chat with the AI assistant.
 
 ## Development
 
+### Linting and Formatting
+
 Run linting:
 
 ```bash
@@ -98,4 +100,18 @@ Format code:
 
 ```bash
 ruff format .
-``` 
+```
+
+### Pre-commit Hooks
+
+This project uses pre-commit to run checks before each commit. To set up:
+
+```bash
+# Install pre-commit
+uv pip install pre-commit
+
+# Install the git hooks
+pre-commit install
+```
+
+Now, ruff checks will run automatically before each commit, ensuring code quality.

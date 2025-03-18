@@ -118,4 +118,4 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         console.print("\n[bold yellow]Chatbot terminated by user.[/bold yellow]")
-        sys.exit(0) 
+        sys.exit(0)
