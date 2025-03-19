@@ -27,15 +27,17 @@ export OPENAI_API_KEY=your_key_here
 
 ## Configure Profiles
 
-The chatbot supports multiple configuration profiles, allowing you to save different settings for different use cases. Profiles are stored as YAML files in the `~/.mini_chat/profiles/` directory.
+The chatbot supports multiple configuration profiles, allowing you to save different settings for different use cases. Profiles are stored as YAML files in the `~/.config/mini-chat/profiles/` directory.
 
-You can:
-- Create multiple named profiles
-- Switch between profiles during a session
-- Clone existing profiles
-- Delete profiles
+Profiles are managed by directly editing the YAML files:
+- Each profile is stored as a separate `<profile_name>.yaml` file
+- The active profile is specified in `~/.config/mini-chat/active_profile.txt`
+- The default profile is used if none is specified
 
-All configuration changes are saved per-profile, making it easy to maintain different setups for different tasks.
+You can switch between profiles within the application using:
+```
+/profile use <profile_name>
+```
 
 ## Usage
 
@@ -49,7 +51,7 @@ Run with `mini-chat` or `mc`
 - `/exit` - Exit
 - `/system <msg>` - Add system instructions
 - `/config` - View/change settings
-- `/profile` - Manage configuration profiles
+- `/profile use <name>` - Switch between profiles
 
 ## Project Structure
 
