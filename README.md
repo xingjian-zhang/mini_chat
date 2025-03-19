@@ -14,12 +14,9 @@ A minimal terminal-based chatbot using Rich for UI and direct HTTP requests for 
 ## Installation
 
 ```bash
-# Install from GitHub
-pip install git+https://github.com/xingjian-zhang/mini-chat.git
-
 # Development setup
-git clone https://github.com/xingjian-zhang/mini-chat.git
-cd mini-chat
+git clone https://github.com/xingjian-zhang/mini_chat.git
+cd mini_chat
 uv venv && uv pip install -e ".[dev]"
 ```
 
