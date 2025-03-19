@@ -2,12 +2,14 @@
 
 A minimal terminal-based chatbot using Rich for UI and direct HTTP requests for API communication.
 
+![image](assets/image.png)
+
 ## Features
 
-- Rich terminal UI with syntax highlighting
-- Markdown support and streaming responses
-- Profile and configuration management
-- Extremely lightweight
+- 🎨 Rich terminal UI with syntax highlighting
+- ✨ Markdown support and streaming responses
+- ⚙️ Profile and configuration management
+- 🪶 Extremely lightweight
 
 ## Installation
 
