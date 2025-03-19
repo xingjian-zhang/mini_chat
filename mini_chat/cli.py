@@ -7,9 +7,6 @@ from rich.table import Table
 
 from mini_chat.config import (
     DEFAULT_CONFIG,
-    DEFAULT_PROFILE_NAME,
-    clone_profile,
-    delete_profile,
     get_active_profile,
     list_available_profiles,
     load_config,
@@ -19,10 +16,12 @@ from mini_chat.config import (
 )
 from mini_chat.models import Conversation, Message
 from mini_chat.ui import show_help
+from mini_chat.utils import pause_after
 
 console = Console()
 
 
+@pause_after
 def show_config(config: dict[str, Any]) -> None:
     """Display the current configuration."""
     active_profile = get_active_profile()
@@ -43,20 +42,15 @@ def show_config(config: dict[str, Any]) -> None:
     console.print(table)
 
 
-def show_profiles() -> None:
-    """Display available configuration profiles."""
-    active_profile = get_active_profile()
-    profiles = list_available_profiles()
-
-    table = Table(title="Configuration Profiles")
-    table.add_column("Profile", style="bold blue")
-    table.add_column("Status", style="green")
-
-    for profile in profiles:
-        status = "[bold green]ACTIVE[/bold green]" if profile == active_profile else ""
-        table.add_row(profile, status)
-
-    console.print(table)
+@pause_after
+def show_system_message(conversation: Conversation) -> None:
+    """Display the current system message."""
+    system_msgs = [msg for msg in conversation.messages if msg.role == "system"]
+    if system_msgs:
+        console.print("[bold]Current system message:[/bold]")
+        console.print(system_msgs[0].content)
+    else:
+        console.print("[bold yellow]No system message set.[/bold yellow]")
 
 
 def handle_system_command(
@@ -65,12 +59,7 @@ def handle_system_command(
     """Handle the /system command."""
     if not args:
         # Show current system prompt if no args
-        system_msgs = [msg for msg in conversation.messages if msg.role == "system"]
-        if system_msgs:
-            console.print("[bold]Current system message:[/bold]")
-            console.print(system_msgs[0].content)
-        else:
-            console.print("[bold yellow]No system message set.[/bold yellow]")
+        show_system_message(conversation)
         return config
     else:
         # Add system message to conversation and save to config
@@ -127,104 +116,6 @@ def handle_config_command(
             return config
 
 
-def handle_profile_command(
-    args: str, conversation: Conversation, config: dict[str, Any]
-) -> dict[str, Any]:
-    """Handle the /profile command."""
-    if not args:
-        # Show current profile and list available profiles
-        console.print(f"[bold]Current profile:[/bold] {get_active_profile()}")
-        show_profiles()
-        return config
-    else:
-        # Profile management commands
-        profile_args = args.split()
-        subcmd = profile_args[0] if profile_args else ""
-
-        if subcmd == "use" and len(profile_args) > 1:
-            # Switch to a different profile
-            profile_name = profile_args[1]
-
-            # If profile doesn't exist, create it
-            if profile_name not in list_available_profiles():
-                msg = "[yellow]Profile '{}' does not exist. Creating new profile.[/yellow]"
-                console.print(msg.format(profile_name))
-
-            # Set as active profile
-            set_active_profile(profile_name)
-            updated_config = load_config()
-
-            # Update the conversation with the new system prompt
-            for i, msg in enumerate(conversation.messages):
-                if msg.role == "system":
-                    conversation.messages[i] = Message(
-                        role="system", content=updated_config["system_prompt"]
-                    )
-                    break
-            else:
-                conversation.add_message("system", updated_config["system_prompt"])
-
-            console.print(f"[bold green]Switched to profile: {profile_name}[/bold green]")
-            return updated_config
-
-        elif subcmd == "list":
-            # List all available profiles
-            show_profiles()
-            return config
-
-        elif subcmd == "create" and len(profile_args) > 1:
-            # Create a new profile
-            profile_name = profile_args[1]
-
-            # Use current config as template if specified
-            if len(profile_args) > 2 and profile_args[2] == "--from-current":
-                save_config(config, profile_name)
-            else:
-                # Start with defaults
-                save_config(DEFAULT_CONFIG.copy(), profile_name)
-
-            console.print(f"[bold green]Created new profile: {profile_name}[/bold green]")
-            return config
-
-        elif subcmd == "delete" and len(profile_args) > 1:
-            # Delete a profile
-            profile_name = profile_args[1]
-
-            if profile_name == DEFAULT_PROFILE_NAME:
-                console.print("[bold red]Cannot delete the default profile.[/bold red]")
-            else:
-                if delete_profile(profile_name):
-                    console.print(f"[bold green]Deleted profile: {profile_name}[/bold green]")
-
-                    # If this was the active profile, reload config
-                    if get_active_profile() == DEFAULT_PROFILE_NAME:
-                        return load_config()
-                else:
-                    console.print(f"[bold red]Profile '{profile_name}' does not exist.[/bold red]")
-            return config
-
-        elif subcmd == "clone" and len(profile_args) > 2:
-            # Clone a profile
-            source_profile = profile_args[1]
-            target_profile = profile_args[2]
-
-            if source_profile not in list_available_profiles():
-                console.print(
-                    f"[bold red]Source profile '{source_profile}' does not exist.[/bold red]"
-                )
-            else:
-                clone_profile(source_profile, target_profile)
-                console.print(
-                    f"[bold green]Cloned '{source_profile}' to '{target_profile}'.[/bold green]"
-                )
-            return config
-        else:
-            cmd_options = "[use|list|create|delete|clone]"
-            error_msg = f"[bold red]Unknown profile command. Use: /profile {cmd_options}[/bold red]"
-            console.print(error_msg)
-            return config
-
-
 def handle_reset_command(args: str, config: dict[str, Any]) -> dict[str, Any]:
     """Handle the /reset command."""
     if args == "config":
@@ -232,11 +123,59 @@ def handle_reset_command(args: str, config: dict[str, Any]) -> dict[str, Any]:
         updated_config = DEFAULT_CONFIG.copy()
         updated_config["api_key"] = config["api_key"]  # Keep API key
         save_config(updated_config)
-        console.print("[bold yellow]Configuration reset to defaults.[/bold yellow]")
+        with pause_after():
+            console.print("[bold yellow]Configuration reset to defaults.[/bold yellow]")
         return updated_config
     else:
-        console.print("[bold red]Unknown reset target. Use: /reset config[/bold red]")
+        with pause_after():
+            console.print("[bold red]Unknown reset target. Use: /reset config[/bold red]")
         return config
+
+
+def handle_profile_command(
+    args: str, conversation: Conversation, config: dict[str, Any]
+) -> dict[str, Any]:
+    """Handle the /profile command."""
+    if not args:
+        # Show current profile using context manager
+        with pause_after():
+            console.print(f"[bold]Current profile:[/bold] {get_active_profile()}")
+            console.print(
+                "[italic]Profiles can be managed manually by editing files in "
+                "~/.config/mini-chat/profiles/[/italic]"
+            )
+        return config
+    else:
+        # Profile switching commands
+        profile_args = args.split()
+        subcmd = profile_args[0] if profile_args else ""
+
+        if subcmd == "use" and len(profile_args) > 1:
+            # Switch to a different profile
+            profile_name = profile_args[1]
+            profiles = list_available_profiles()
+
+            if profile_name not in profiles:
+                with pause_after():
+                    console.print(f"[bold red]Profile '{profile_name}' does not exist.[/bold red]")
+                    console.print(f"[italic]Available profiles: {', '.join(profiles)}[/italic]")
+                return config
+
+            # Set as active profile
+            set_active_profile(profile_name)
+            updated_config = load_config()
+
+            # Start a new session with the new system prompt
+            conversation.messages.clear()
+            conversation.add_message("system", updated_config["system_prompt"])
+
+            console.print(f"[bold green]Switched to profile: {profile_name}[/bold green]")
+            return updated_config
+        else:
+            console.print(
+                "[bold red]Unknown profile command. Use: /profile use <profile_name>[/bold red]"
+            )
+            return config
 
 
 def process_command(
@@ -263,9 +202,6 @@ def process_command(
         return False, updated_config
     elif cmd == "/help":
         show_help()
-        # Pause to allow the user to read the help message
-        console.print("\n[dim]Press Enter to continue...[/dim]")
-        input()
     elif cmd == "/clear":
         conversation.clear()
         console.print("[bold yellow]Conversation cleared.[/bold yellow]")

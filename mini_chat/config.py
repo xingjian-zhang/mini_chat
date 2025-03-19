@@ -19,7 +19,11 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "max_tokens": 1000,
     "temperature": 0.7,
     "stream": True,
-    "system_prompt": "You are a helpful assistant.",
+    "system_prompt": (
+        "You are a helpful assistant. "
+        "You use math formulas that could be displayed in pure texts "
+        "but not in LaTeX unless the user asks for it. "
+    ),
 }
 
 # Config file location

@@ -12,6 +12,7 @@ from rich.table import Table
 from rich.text import Text
 
 from mini_chat.models import Conversation, Message
+from mini_chat.utils import pause_after
 
 console = Console()
 
@@ -111,6 +112,7 @@ def handle_streaming_response(conversation: Conversation, live: Live) -> Callabl
     return update_content
 
 
+@pause_after
 def show_help() -> None:
     """Display help information."""
     # Create a nicely formatted title
@@ -136,16 +138,15 @@ def show_help() -> None:
     table.add_row("/save", "Save current configuration")
     table.add_row("/reset config", "Reset configuration to defaults")
 
-    # Profile management commands
-    table.add_row("/profile", "Show current profile and list all profiles")
-    table.add_row("/profile use <n>", "Switch to a different profile")
-    table.add_row("/profile list", "List all available profiles")
-    table.add_row("/profile create <n>", "Create a new profile with default settings")
-    table.add_row(
-        "/profile create <n> --from-current", "Create a new profile from current settings"
+    # Profile commands
+    table.add_row("/profile", "Show current profile")
+    table.add_row("/profile use <name>", "Switch to a different profile")
+
+    # Note about profile management
+    console.print(
+        "\n[italic]Note: Profile files can be managed manually in "
+        "~/.config/mini-chat/profiles/[/italic]"
     )
-    table.add_row("/profile clone <src> <dest>", "Clone an existing profile to a new one")
-    table.add_row("/profile delete <n>", "Delete a profile")
 
     # Print the table to the terminal using the console object
     console.print(table)

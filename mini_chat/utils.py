@@ -30,3 +30,56 @@ def create_progress_bar(desc: str) -> Progress:
     progress = Progress()
     _ = progress.add_task(desc, total=None)
     return progress
+
+
+class PauseAfter:
+    """Context manager and decorator that pauses execution and waits for user input.
+
+    Can be used either as a decorator:
+
+    @pause_after
+    def my_function():
+        # Function code here
+        print("This function will pause after execution")
+
+    Or as a context manager:
+
+    with pause_after():
+        # Block of code here
+        print("This block will pause after execution")
+    """
+
+    def __init__(self, func=None):
+        """Initialize as either a decorator or context manager."""
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        """Called when used as a decorator."""
+        if self.func is None:
+            # Being called with a function argument
+            self.func = args[0]
+            return self
+
+        # Execute the wrapped function
+        result = self.func(*args, **kwargs)
+        self._pause()
+        return result
+
+    def __enter__(self):
+        """Enter the context manager."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Exit the context manager and pause."""
+        self._pause()
+        # Don't suppress exceptions
+        return False
+
+    def _pause(self):
+        """Common pause functionality."""
+        console.print("\n[dim]Press Enter to continue...[/dim]")
+        input()
+
+
+# For backward compatibility and to maintain the decorator syntax
+pause_after = PauseAfter
